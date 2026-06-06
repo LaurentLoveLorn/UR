@@ -1,0 +1,895 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>1M Scholars Ltd — Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css" />
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:#f0f4f8;min-height:100vh}
+:root{--navy:#0a2240;--blue:#1a4f8a;--light-blue:#eef4fd;--border:#d0dbe8;--text:#1a2433;--muted:#6b7a8d;--success:#2d7a4f;--danger:#c0392b;--warning:#b45309;--white:#fff}
+
+/* NAV */
+.topnav{background:var(--navy);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:100}
+.nav-brand{display:flex;align-items:center;gap:10px;color:#fff;font-family:'Playfair Display',serif;font-size:18px;font-weight:500}
+.nav-circle{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,0.15);border:1.5px solid rgba(255,255,255,0.3);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#fff}
+.nav-tabs{display:flex;gap:4px}
+.nav-tab{padding:6px 16px;border-radius:6px;font-size:13px;color:rgba(255,255,255,0.7);cursor:pointer;border:none;background:transparent;font-family:'DM Sans',sans-serif;transition:all .15s}
+.nav-tab:hover{color:#fff;background:rgba(255,255,255,0.1)}
+.nav-tab.active{color:#fff;background:rgba(255,255,255,0.18)}
+
+/* LAYOUT */
+.page{display:none;animation:fadeIn .2s ease}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+
+/* FORM PAGE */
+.form-wrap{max-width:820px;margin:2rem auto;padding:0 1rem 4rem}
+.form-card{background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08)}
+.form-header{background:linear-gradient(135deg,#0a2240,#1a4f8a);padding:2.2rem 2.4rem 1.8rem;position:relative;overflow:hidden}
+.form-header::after{content:'';position:absolute;top:-50px;right:-50px;width:220px;height:220px;border-radius:50%;border:2px solid rgba(255,255,255,0.06)}
+.fh-logo{display:flex;align-items:center;gap:12px;margin-bottom:1.4rem}
+.fh-circle{width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,0.15);border:2px solid rgba(255,255,255,0.3);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:16px;font-weight:600;color:#fff}
+.fh-name h1{font-family:'Playfair Display',serif;font-size:19px;color:#fff;font-weight:500}
+.fh-name p{font-size:11px;color:rgba(255,255,255,0.6);margin-top:2px}
+.fh-title h2{font-family:'Playfair Display',serif;font-size:23px;color:#fff;font-weight:500;line-height:1.3}
+.fh-title p{font-size:12px;color:rgba(255,255,255,0.65);margin-top:5px}
+.fh-badges{display:flex;gap:7px;flex-wrap:wrap;margin-top:1rem}
+.fh-badge{background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);border-radius:20px;padding:3px 11px;font-size:11px;color:rgba(255,255,255,0.85)}
+
+.policy-bar{background:#fffbeb;border-left:4px solid #f59e0b;padding:12px 18px;display:flex;gap:10px;align-items:flex-start}
+.policy-bar i{color:#b45309;font-size:17px;margin-top:2px;flex-shrink:0}
+.policy-bar p{font-size:12px;color:#78350f;line-height:1.6}
+.policy-bar strong{font-weight:500}
+
+.form-body{padding:2rem 2.4rem}
+.sec-label{font-size:10.5px;font-weight:500;letter-spacing:1.4px;text-transform:uppercase;color:var(--muted);margin-bottom:1rem;padding-bottom:7px;border-bottom:0.5px solid var(--border);display:flex;align-items:center;gap:7px}
+.sec-label i{font-size:14px;color:var(--blue)}
+.sec-gap{margin-bottom:1.8rem}
+.row{display:grid;gap:14px;margin-bottom:14px}
+.r2{grid-template-columns:1fr 1fr}
+.r3{grid-template-columns:1fr 1fr 1fr}
+.r1{grid-template-columns:1fr}
+.field{display:flex;flex-direction:column;gap:4px}
+.field label{font-size:11.5px;font-weight:500;color:var(--muted)}
+.field label .req{color:#e24b4a;margin-left:2px}
+.field input,.field select,.field textarea{border:0.5px solid var(--border);border-radius:8px;padding:8px 11px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--text);background:#fff;outline:none;transition:border-color .15s}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,79,138,0.08)}
+.field textarea{resize:vertical;min-height:65px;line-height:1.5}
+.hint{font-size:11px;color:var(--muted);margin-top:2px}
+.err{font-size:11px;color:#e24b4a;margin-top:2px;display:none}
+.field.invalid input,.field.invalid select{border-color:#e24b4a!important}
+.field.invalid .err{display:block}
+
+.choice-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px}
+.choice-card{border:0.5px solid var(--border);border-radius:10px;padding:12px 11px;cursor:pointer;transition:all .15s}
+.choice-card:hover{border-color:var(--blue);background:#f5f9ff}
+.choice-num{font-size:10px;font-weight:500;color:var(--blue);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
+.choice-card input[type=text],.choice-card select{width:100%;border:none;border-bottom:0.5px solid var(--border);border-radius:0;padding:4px 0;font-size:12.5px;background:transparent;font-family:'DM Sans',sans-serif;color:var(--text);outline:none;margin-top:5px}
+.choice-card input[type=text]:focus,.choice-card select:focus{border-bottom-color:var(--blue);box-shadow:none}
+
+.check-row{display:flex;align-items:flex-start;gap:9px;margin-bottom:9px}
+.check-row input[type=checkbox]{margin-top:2px;accent-color:var(--blue);width:14px;height:14px;flex-shrink:0;cursor:pointer}
+.check-row label{font-size:12.5px;color:var(--text);line-height:1.5;cursor:pointer}
+
+.rules-box{background:#f7f9fb;border:0.5px solid var(--border);border-radius:10px;padding:1.1rem 1.3rem;margin-bottom:1.2rem}
+.rules-box h4{font-size:12.5px;font-weight:500;color:var(--text);margin-bottom:9px;display:flex;align-items:center;gap:5px}
+.rules-box h4 i{color:var(--blue);font-size:14px}
+.rules-list{list-style:none}
+.rules-list li{font-size:12px;color:var(--muted);padding:4px 0;display:flex;gap:7px;line-height:1.5;border-bottom:0.5px solid var(--border)}
+.rules-list li:last-child{border-bottom:none}
+.rules-list li::before{content:'•';color:var(--blue);font-weight:700;flex-shrink:0}
+
+/* PAYMENT BOX */
+.pay-box{border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:1.2rem}
+.pay-box-head{background:var(--navy);padding:10px 16px;display:flex;align-items:center;gap:8px;color:#fff;font-size:12.5px;font-weight:500}
+.pay-box-head i{font-size:15px}
+.pay-section{padding:14px 16px;border-bottom:0.5px solid var(--border)}
+.pay-section:last-child{border-bottom:none}
+.pay-section h5{font-size:11.5px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.pay-section h5 i{font-size:14px;color:var(--blue)}
+.pay-detail{display:flex;justify-content:space-between;align-items:center;padding:4px 0;font-size:12.5px;border-bottom:0.5px solid #f0f4f8}
+.pay-detail:last-child{border-bottom:none}
+.pay-label{color:var(--muted)}
+.pay-val{color:var(--text);font-weight:500;font-family:monospace;font-size:13px}
+.pay-name{color:var(--blue);font-size:11px;font-style:italic}
+
+.fee-row{display:flex;justify-content:space-between;padding:6px 16px;font-size:12.5px;color:var(--text);border-bottom:0.5px solid #f0f4f8}
+.fee-row:last-child{border-bottom:none;background:#f7f9fb;font-weight:500;padding:8px 16px}
+.fee-row span:last-child{color:var(--blue);font-weight:500}
+
+.disclaimer{background:#fff1f1;border-left:3px solid #e24b4a;border-radius:0 8px 8px 0;padding:11px 15px;margin-bottom:1.2rem}
+.disclaimer p{font-size:11.5px;color:#a32d2d;line-height:1.6}
+.disclaimer strong{font-weight:500}
+
+.submit-btn{width:100%;padding:14px;background:linear-gradient(135deg,#0a2240,#1a4f8a);color:#fff;border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .2s}
+.submit-btn:hover{opacity:.9}
+.submit-btn:disabled{opacity:.5;cursor:not-allowed}
+.footer-note{text-align:center;font-size:11px;color:var(--muted);margin-top:.8rem;line-height:1.6}
+
+/* SUCCESS */
+.success-wrap{padding:2.5rem;text-align:center;display:none;flex-direction:column;align-items:center}
+.success-wrap.show{display:flex}
+.success-icon{width:68px;height:68px;border-radius:50%;background:#eaf3de;display:flex;align-items:center;justify-content:center;margin-bottom:1rem}
+.success-icon i{font-size:34px;color:#3b6d11}
+.success-wrap h3{font-family:'Playfair Display',serif;font-size:21px;margin-bottom:6px}
+.success-wrap p{font-size:13px;color:var(--muted);line-height:1.6;max-width:420px}
+.ref-box{background:#f7f9fb;border:0.5px solid var(--border);border-radius:8px;padding:10px 22px;margin:1rem 0;font-size:20px;font-weight:500;letter-spacing:3px;color:var(--blue);font-family:monospace}
+
+/* ADMIN */
+.admin-login{max-width:360px;margin:4rem auto;padding:0 1rem}
+.login-card{background:#fff;border-radius:14px;padding:2rem;box-shadow:0 4px 24px rgba(0,0,0,0.09)}
+.login-card h2{font-family:'Playfair Display',serif;font-size:20px;text-align:center;margin-bottom:0.3rem}
+.login-card p{font-size:12px;color:var(--muted);text-align:center;margin-bottom:1.5rem}
+.login-err{background:#fff1f1;border:0.5px solid #f0b4b4;border-radius:7px;padding:8px 12px;font-size:12px;color:#a32d2d;margin-bottom:1rem;display:none}
+.login-err.show{display:block}
+
+.admin-wrap{max-width:1060px;margin:1.5rem auto;padding:0 1rem 4rem}
+.admin-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:1.5rem}
+.stat-card{background:#fff;border-radius:10px;padding:1rem 1.2rem;border:0.5px solid var(--border)}
+.stat-num{font-size:26px;font-weight:500;color:var(--navy)}
+.stat-label{font-size:11px;color:var(--muted);margin-top:3px}
+.stat-icon{font-size:20px;color:var(--blue);margin-bottom:6px}
+
+.admin-card{background:#fff;border-radius:12px;border:0.5px solid var(--border);overflow:hidden;margin-bottom:1.5rem}
+.admin-card-head{padding:12px 16px;background:#f7f9fb;border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.admin-card-head h3{font-size:13.5px;font-weight:500;display:flex;align-items:center;gap:7px}
+.admin-card-head h3 i{color:var(--blue);font-size:15px}
+
+.search-bar{display:flex;gap:8px;padding:12px 16px;border-bottom:0.5px solid var(--border);flex-wrap:wrap}
+.search-bar input,.search-bar select{border:0.5px solid var(--border);border-radius:7px;padding:7px 11px;font-size:12.5px;font-family:'DM Sans',sans-serif;color:var(--text);outline:none;background:#fff}
+.search-bar input{flex:1;min-width:180px}
+.search-bar input:focus,.search-bar select:focus{border-color:var(--blue)}
+.btn-sm{padding:7px 14px;border-radius:7px;font-size:12.5px;font-family:'DM Sans',sans-serif;cursor:pointer;border:0.5px solid var(--border);background:#fff;color:var(--text);display:flex;align-items:center;gap:5px;transition:all .15s}
+.btn-sm:hover{background:#f0f4f8}
+.btn-sm.primary{background:var(--navy);color:#fff;border-color:var(--navy)}
+.btn-sm.primary:hover{opacity:.9}
+.btn-sm.danger{background:#fff1f1;color:#a32d2d;border-color:#f0b4b4}
+.btn-sm.danger:hover{background:#fde8e8}
+
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{background:#f7f9fb;padding:9px 12px;text-align:left;font-size:10.5px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;border-bottom:0.5px solid var(--border);white-space:nowrap}
+td{padding:9px 12px;border-bottom:0.5px solid #f0f4f8;color:var(--text);vertical-align:top}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#fafcff}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:20px;font-size:10.5px;font-weight:500}
+.badge.new{background:#eef4fd;color:#185fa5}
+.badge.paid{background:#eaf3de;color:#3b6d11}
+.badge.pending{background:#fffbeb;color:#b45309}
+.badge.rejected{background:#fff1f1;color:#a32d2d}
+
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:200;display:none;align-items:center;justify-content:center}
+.modal-bg.open{display:flex}
+.modal{background:#fff;border-radius:14px;max-width:600px;width:90%;max-height:85vh;overflow-y:auto;padding:1.5rem}
+.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.2rem;padding-bottom:10px;border-bottom:0.5px solid var(--border)}
+.modal-head h3{font-family:'Playfair Display',serif;font-size:17px}
+.modal-close{background:none;border:none;font-size:20px;color:var(--muted);cursor:pointer;line-height:1}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.detail-item{padding:8px 10px;background:#f7f9fb;border-radius:7px}
+.detail-item .d-label{font-size:10.5px;color:var(--muted);font-weight:500;text-transform:uppercase;letter-spacing:.6px;margin-bottom:2px}
+.detail-item .d-val{font-size:12.5px;color:var(--text);font-weight:400}
+.detail-item.full{grid-column:1/-1}
+.status-btns{display:flex;gap:8px;margin-top:1.2rem;flex-wrap:wrap}
+
+.logout-btn{background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);border-radius:6px;padding:5px 12px;font-size:12px;color:rgba(255,255,255,0.8);cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:5px}
+.logout-btn:hover{background:rgba(255,255,255,0.2);color:#fff}
+
+/* LOADING */
+.loading-overlay{position:fixed;inset:0;background:rgba(255,255,255,0.8);z-index:300;display:none;align-items:center;justify-content:center;flex-direction:column;gap:10px}
+.loading-overlay.show{display:flex}
+.spinner{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+@media(max-width:640px){.r2,.r3,.choice-grid,.admin-stats{grid-template-columns:1fr}.form-body{padding:1.5rem}.form-header{padding:1.6rem 1.4rem 1.2rem}}
+</style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <p style="font-size:13px;color:var(--muted)">Saving your application...</p>
+</div>
+
+<nav class="topnav">
+  <div class="nav-brand">
+    <div class="nav-circle">1M</div>
+    1M Scholars Ltd
+  </div>
+  <div style="display:flex;align-items:center;gap:8px">
+    <div class="nav-tabs">
+      <button class="nav-tab active" onclick="showPage('formPage',this)"><i class="ti ti-file-text" style="font-size:13px;margin-right:4px"></i>Apply</button>
+      <button class="nav-tab" onclick="showPage('adminPage',this)"><i class="ti ti-shield-lock" style="font-size:13px;margin-right:4px"></i>Admin</button>
+    </div>
+    <button class="logout-btn" id="logoutBtn" onclick="logout()" style="display:none"><i class="ti ti-logout" style="font-size:13px"></i>Logout</button>
+  </div>
+</nav>
+
+<!-- APPLICATION FORM PAGE -->
+<div class="page active" id="formPage">
+<div class="form-wrap">
+<div class="form-card">
+
+  <div id="formContent">
+  <div class="form-header">
+    <div class="fh-logo">
+      <div class="fh-circle">1M</div>
+      <div class="fh-name">
+        <h1>1M Scholars Ltd</h1>
+        <p>University Admission Consulting · Kigali, Rwanda</p>
+      </div>
+    </div>
+    <div class="fh-title">
+      <h2>S6 Leaver University Application Form</h2>
+      <p>University of Rwanda · Academic Year 2025–2026 · Application window: 05–18 September 2025</p>
+    </div>
+    <div class="fh-badges">
+      <span class="fh-badge"><i class="ti ti-shield-check"></i> Secure & Confidential</span>
+      <span class="fh-badge"><i class="ti ti-calendar"></i> 2025 S6 Leavers Only</span>
+      <span class="fh-badge"><i class="ti ti-database"></i> Stored Securely</span>
+    </div>
+  </div>
+
+  <div class="policy-bar">
+    <i class="ti ti-alert-triangle"></i>
+    <p><strong>Important:</strong> 1M Scholars Ltd is a consultative agency only. Fees paid cover guidance services and do <strong>not</strong> guarantee admission, placement, scholarships, or employment. All decisions rest solely with the University of Rwanda.</p>
+  </div>
+
+  <div class="form-body">
+
+    <!-- PERSONAL INFO -->
+    <div class="sec-gap">
+      <div class="sec-label"><i class="ti ti-user"></i> Personal Information</div>
+      <div class="row r2">
+        <div class="field" id="f-firstName"><label>First Name <span class="req">*</span></label><input id="firstName" type="text" placeholder="e.g. Amahle" /><span class="err">Required</span></div>
+        <div class="field" id="f-lastName"><label>Last Name <span class="req">*</span></label><input id="lastName" type="text" placeholder="e.g. Uwimana" /><span class="err">Required</span></div>
+      </div>
+      <div class="row r2">
+        <div class="field" id="f-dob"><label>Date of Birth <span class="req">*</span></label><input id="dob" type="date" /><span class="err">Required</span></div>
+        <div class="field" id="f-gender"><label>Gender <span class="req">*</span></label><select id="gender"><option value="">Select gender</option><option>Female</option><option>Male</option><option>Prefer not to say</option></select><span class="err">Required</span></div>
+      </div>
+      <div class="row r2">
+        <div class="field" id="f-nationality"><label>Nationality <span class="req">*</span></label><select id="nationality"><option value="">Select nationality</option><option>Rwandan</option><option>Burundian</option><option>Congolese (DRC)</option><option>Kenyan</option><option>Tanzanian</option><option>Ugandan</option><option>Other EAC</option><option>Non-EAC International</option></select><span class="err">Required</span></div>
+        <div class="field" id="f-category"><label>Applicant Category <span class="req">*</span></label><select id="category"><option value="">Select category</option><option>National (Rwanda)</option><option>EAC Citizen</option><option>International (Non-EAC)</option><option>National with Equivalence Certificate</option><option>International with Equivalence Certificate</option></select><span class="err">Required</span></div>
+      </div>
+      <div class="row r2">
+        <div class="field" id="f-idNo"><label>National ID / Passport No. <span class="req">*</span></label><input id="idNo" type="text" placeholder="ID or Passport number" /><span class="err">Required or already registered</span></div>
+        <div class="field" id="f-phone"><label>Phone Number <span class="req">*</span></label><input id="phone" type="tel" placeholder="+250 7XX XXX XXX" /><span class="err">Required</span></div>
+      </div>
+      <div class="row r2">
+        <div class="field" id="f-email"><label>Email Address <span class="req">*</span></label><input id="email" type="email" placeholder="your.email@example.com" /><span class="err">Required or already registered</span></div>
+        <div class="field"><label>WhatsApp Number</label><input id="whatsapp" type="tel" placeholder="+250 7XX XXX XXX (if different)" /></div>
+      </div>
+      <div class="row r1">
+        <div class="field" id="f-district"><label>District of Residence <span class="req">*</span></label><select id="district"><option value="">Select district</option><option>Kigali - Gasabo</option><option>Kigali - Kicukiro</option><option>Kigali - Nyarugenge</option><option>Bugesera</option><option>Gatsibo</option><option>Kayonza</option><option>Kirehe</option><option>Ngoma</option><option>Nyagatare</option><option>Rwamagana</option><option>Burera</option><option>Gakenke</option><option>Gicumbi</option><option>Musanze</option><option>Rulindo</option><option>Gisagara</option><option>Huye</option><option>Kamonyi</option><option>Muhanga</option><option>Nyamagabe</option><option>Nyanza</option><option>Nyaruguru</option><option>Ruhango</option><option>Karongi</option><option>Ngororero</option><option>Nyabihu</option><option>Nyamasheke</option><option>Rubavu</option><option>Rusizi</option><option>Rutsiro</option><option>Outside Rwanda</option></select><span class="err">Required</span></div>
+      </div>
+    </div>
+
+    <!-- ACADEMIC -->
+    <div class="sec-gap">
+      <div class="sec-label"><i class="ti ti-school"></i> Academic Background</div>
+      <div class="row r2">
+        <div class="field" id="f-school"><label>Secondary School Attended <span class="req">*</span></label><input id="school" type="text" placeholder="Full name of your school" /><span class="err">Required</span></div>
+        <div class="field" id="f-year"><label>Year of S6 Completion <span class="req">*</span></label><select id="year"><option value="">Select year</option><option value="2025">2025 (Current S6 Leaver)</option><option value="equivalence2025">Equivalence Certificate – 2025</option></select><span class="err">Required</span><span class="hint">ONLY for 2025 S6 leavers or 2025 NESA Equivalence holders</span></div>
+      </div>
+      <div class="row r2">
+        <div class="field" id="f-indexNo"><label>NESA Index Number <span class="req">*</span></label><input id="indexNo" type="text" placeholder="e.g. RW/2025/XXXXXX" /><span class="err">Required</span><span class="hint">Used to link results at applications.ur.ac.rw/nesa</span></div>
+        <div class="field" id="f-combo"><label>A-Level Combination <span class="req">*</span></label><select id="combo"><option value="">Select combination</option><option>PCM – Physics, Chemistry, Mathematics</option><option>PCB – Physics, Chemistry, Biology</option><option>MCB – Mathematics, Chemistry, Biology</option><option>MPC – Mathematics, Physics, Computer Science</option><option>MEG – Mathematics, Economics, Geography</option><option>HEG – History, Economics, Geography</option><option>HGL – History, Geography, Literature</option><option>LFK – Languages (French, Kinyarwanda)</option><option>Other</option></select><span class="err">Required</span></div>
+      </div>
+      <div class="row r2">
+        <div class="field"><label>Equivalence Certificate No. <small style="font-weight:300">(if applicable)</small></label><input id="equivNo" type="text" placeholder="NESA Equivalence Certificate No." /></div>
+        <div class="field"><label>Equivalence Date <small style="font-weight:300">(if applicable)</small></label><input id="equivDate" type="date" /><span class="hint">Must be dated 2025</span></div>
+      </div>
+    </div>
+
+    <!-- PROGRAM CHOICES -->
+    <div class="sec-gap">
+      <div class="sec-label"><i class="ti ti-list-check"></i> Program Choices (up to 3)</div>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.5">Rank your preferred University of Rwanda programs. Base choices on your A-level combination and academic merit. Check entry requirements at <strong>www.ur.ac.rw</strong>.</p>
+      <div class="choice-grid">
+        <div class="choice-card">
+          <div class="choice-num">1st Choice <span style="color:#e24b4a">*</span></div>
+          <input type="text" id="prog1" placeholder="Program name" />
+          <select id="col1"><option value="">Select College</option><option>Agriculture, Animal Sci. & Vet. Med. (CAVM)</option><option>Arts & Social Sciences (CASS)</option><option>Business & Economics (CBE)</option><option>Education (CE)</option><option>Medicine & Health Sciences (CMHS)</option><option>Science & Technology (CST)</option><option>Legal Practice & Dev. (ILPD)</option></select>
+        </div>
+        <div class="choice-card">
+          <div class="choice-num">2nd Choice</div>
+          <input type="text" id="prog2" placeholder="Program name" />
+          <select id="col2"><option value="">Select College</option><option>Agriculture, Animal Sci. & Vet. Med. (CAVM)</option><option>Arts & Social Sciences (CASS)</option><option>Business & Economics (CBE)</option><option>Education (CE)</option><option>Medicine & Health Sciences (CMHS)</option><option>Science & Technology (CST)</option><option>Legal Practice & Dev. (ILPD)</option></select>
+        </div>
+        <div class="choice-card">
+          <div class="choice-num">3rd Choice</div>
+          <input type="text" id="prog3" placeholder="Program name" />
+          <select id="col3"><option value="">Select College</option><option>Agriculture, Animal Sci. & Vet. Med. (CAVM)</option><option>Arts & Social Sciences (CASS)</option><option>Business & Economics (CBE)</option><option>Education (CE)</option><option>Medicine & Health Sciences (CMHS)</option><option>Science & Technology (CST)</option><option>Legal Practice & Dev. (ILPD)</option></select>
+        </div>
+      </div>
+    </div>
+
+    <!-- DOCUMENTS CHECKLIST -->
+    <div class="sec-gap">
+      <div class="sec-label"><i class="ti ti-files"></i> Documents Checklist</div>
+      <div class="rules-box">
+        <h4><i class="ti ti-clipboard-list"></i> Confirm documents you have ready</h4>
+        <div class="check-row"><input type="checkbox" id="doc1" /><label for="doc1">National ID card (Rwandan) or valid Passport (international applicants)</label></div>
+        <div class="check-row"><input type="checkbox" id="doc2" /><label for="doc2">Certified copy of S6 Certificate of Secondary Education</label></div>
+        <div class="check-row"><input type="checkbox" id="doc3" /><label for="doc3">NESA Equivalence Certificate – certified copy (equivalence applicants only)</label></div>
+        <div class="check-row"><input type="checkbox" id="doc4" /><label for="doc4">NESA Index Number confirmed and ready</label></div>
+        <div class="check-row"><input type="checkbox" id="doc5" /><label for="doc5">UR Reference Number (generated after biographical info step on UR system)</label></div>
+        <div class="check-row"><input type="checkbox" id="doc6" /><label for="doc6">Proof of UR application fee payment (5,000 RWF Rwanda/EAC · 6,000 RWF Non-EAC)</label></div>
+      </div>
+    </div>
+
+    <!-- PAYMENT -->
+    <div class="sec-gap">
+      <div class="sec-label"><i class="ti ti-coin"></i> Consulting Fee & Payment to 1M Scholars Ltd</div>
+
+      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:1rem;background:#f0f6ff;border:1px solid #bcd4f0;border-radius:10px;overflow:hidden">
+        <div class="fee-row" style="width:100%">Standard Application Guidance Package<span>Included</span></div>
+        <div class="fee-row" style="width:100%">Document Review & Program Counselling<span>Included</span></div>
+        <div class="fee-row" style="width:100%">Post-submission Follow-up Session<span>Included</span></div>
+        <div class="fee-row" style="width:100%;background:#e8f0fb;font-weight:500;color:#0c447c">Total Consulting Fee<span style="font-size:14px;color:#0c447c">15,000 RWF</span></div>
+      </div>
+
+      <div class="pay-box">
+        <div class="pay-box-head"><i class="ti ti-building-bank"></i> Bank of Kigali (BK) — Cash or Online Deposit</div>
+        <div class="pay-section">
+          <div class="pay-detail"><span class="pay-label">Account Number</span><span class="pay-val">1002 5970 0587</span></div>
+          <div class="pay-detail"><span class="pay-label">Account Name</span><span class="pay-val" style="font-family:'DM Sans',sans-serif">Lovelorn</span></div>
+          <div class="pay-detail" style="font-size:11px;color:var(--muted);padding-top:6px">Deposit at any BK counter or via BK App / Internet Banking. Do NOT pay through BK Agents.</div>
+        </div>
+      </div>
+
+      <div class="pay-box">
+        <div class="pay-box-head"><i class="ti ti-device-mobile"></i> MTN Mobile Money</div>
+        <div class="pay-section">
+          <h5><i class="ti ti-user"></i> Option 1</h5>
+          <div class="pay-detail"><span class="pay-label">Number</span><span class="pay-val">0781 841 929</span></div>
+          <div class="pay-detail"><span class="pay-label">Name</span><span class="pay-val" style="font-family:'DM Sans',sans-serif">NDIKUBWIMANA Laurent</span></div>
+        </div>
+        <div class="pay-section">
+          <h5><i class="ti ti-user"></i> Option 2</h5>
+          <div class="pay-detail"><span class="pay-label">Number</span><span class="pay-val">0782 774 986</span></div>
+          <div class="pay-detail"><span class="pay-label">Name</span><span class="pay-val" style="font-family:'DM Sans',sans-serif">IMANIRAREBA Milliam</span></div>
+        </div>
+        <div class="pay-section" style="background:#fffbeb">
+          <div style="font-size:11.5px;color:#b45309">Dial <strong>*182*8*1#</strong> or use MoMo app. Always verify the name before confirming payment.</div>
+        </div>
+      </div>
+
+      <div class="pay-box">
+        <div class="pay-box-head"><i class="ti ti-device-mobile"></i> Airtel Money</div>
+        <div class="pay-section">
+          <div class="pay-detail"><span class="pay-label">Number</span><span class="pay-val">0721 777 760</span></div>
+          <div class="pay-detail"><span class="pay-label">Name</span><span class="pay-val" style="font-family:'DM Sans',sans-serif">NDIKUBWIMANA Laurent</span></div>
+        </div>
+      </div>
+
+      <div class="pay-box">
+        <div class="pay-box-head"><i class="ti ti-qrcode"></i> MoMo Pay Code</div>
+        <div class="pay-section">
+          <div class="pay-detail"><span class="pay-label">MoMo Code</span><span class="pay-val">1999014</span></div>
+          <div class="pay-detail"><span class="pay-label">Merchant Name</span><span class="pay-val" style="font-family:'DM Sans',sans-serif">Laurent</span></div>
+          <div style="font-size:11px;color:var(--muted);padding-top:6px">Dial *182*8*1*1999014# or scan MoMo code in app. Amount: 15,000 RWF.</div>
+        </div>
+      </div>
+
+      <div class="field" style="margin-bottom:12px">
+        <label>Preferred Payment Method <span class="req">*</span></label>
+        <select id="payMethod"><option value="">Select payment method</option><option>BK Bank Counter</option><option>BK App / Internet Banking</option><option>MTN MoMo – NDIKUBWIMANA Laurent (0781841929)</option><option>MTN MoMo – IMANIRAREBA Milliam (0782774986)</option><option>Airtel Money – NDIKUBWIMANA Laurent (0721777760)</option><option>MoMo Pay Code 1999014</option></select>
+      </div>
+
+      <div class="disclaimer">
+        <p><strong>Disclaimer:</strong> The 1M Scholars consulting fee covers guidance services only. <strong>It does not guarantee university admission, placement, scholarships, or employment.</strong> All UR admission decisions are based on academic merit and available space. 1M Scholars Ltd is not affiliated with the University of Rwanda. The UR application fee (5,000–6,000 RWF to BK) is separate and paid directly to UR.</p>
+      </div>
+    </div>
+
+    <!-- REFERRAL -->
+    <div class="sec-gap">
+      <div class="sec-label"><i class="ti ti-notes"></i> Additional Information</div>
+      <div class="field"><label>How did you hear about 1M Scholars Ltd?</label><select id="referral"><option value="">Select an option</option><option>Friend / Classmate</option><option>Family member</option><option>Social Media (Facebook)</option><option>Social Media (Instagram / TikTok)</option><option>WhatsApp group</option><option>School / Teacher</option><option>Newspaper / Radio</option><option>Other</option></select></div>
+      <div class="field" style="margin-top:11px"><label>Special needs, questions, or notes for consultant</label><textarea id="notes" placeholder="e.g. Need guidance on equivalence uploads, disability accommodations, etc."></textarea></div>
+    </div>
+
+    <!-- DECLARATION -->
+    <div class="sec-gap">
+      <div class="sec-label"><i class="ti ti-shield"></i> Declaration & Agreement</div>
+      <div class="rules-box">
+        <h4><i class="ti ti-book"></i> UR Eligibility Rules</h4>
+        <ul class="rules-list">
+          <li>This window is ONLY for candidates who completed S6 in 2025 or hold a 2025 NESA Equivalence Certificate.</li>
+          <li>Admissions are based on Advanced Level exam merit and available space — highly competitive.</li>
+          <li>UR application fees are non-refundable (5,000 RWF Rwanda/EAC · 6,000 RWF Non-EAC).</li>
+          <li>Record your UR Reference Number before proceeding. Payments without it are not recognized by UR.</li>
+          <li>Do NOT pay UR fees through BK Agents. Use BK counter, MTN MoMo (*775*5#), BK App, or Urubuto online only.</li>
+          <li>Providing false information may disqualify your application at the University of Rwanda.</li>
+          <li>1M Scholars Ltd consulting fees are non-refundable once services commence.</li>
+        </ul>
+      </div>
+      <div class="check-row" id="check-agree1"><input type="checkbox" id="agree1" /><label for="agree1">I confirm I completed S6 in 2025 (or hold a valid 2025 NESA Equivalence Certificate) and meet the eligibility criteria.</label></div>
+      <div class="check-row" id="check-agree2"><input type="checkbox" id="agree2" /><label for="agree2">I understand 1M Scholars Ltd is a consultative agency only. Payment does NOT guarantee admission, scholarships, or placement of any kind.</label></div>
+      <div class="check-row" id="check-agree3"><input type="checkbox" id="agree3" /><label for="agree3">All information in this form is accurate and complete to the best of my knowledge.</label></div>
+      <div class="check-row" id="check-agree4"><input type="checkbox" id="agree4" /><label for="agree4">I agree to 1M Scholars Ltd terms, including the non-refundable consulting fee policy.</label></div>
+      <div class="check-row" id="check-agree5"><input type="checkbox" id="agree5" /><label for="agree5">I consent to 1M Scholars Ltd contacting me via phone, SMS, or WhatsApp for guidance purposes.</label></div>
+      <div class="row r2" style="margin-top:1rem;margin-bottom:1.2rem">
+        <div class="field" id="f-sigName"><label>Full Name (Signature) <span class="req">*</span></label><input id="sigName" type="text" placeholder="Type your full legal name" /><span class="err">Required</span></div>
+        <div class="field" id="f-sigDate"><label>Date <span class="req">*</span></label><input id="sigDate" type="date" /><span class="err">Required</span></div>
+      </div>
+      <button class="submit-btn" id="submitBtn" onclick="handleSubmit()"><i class="ti ti-send"></i> Submit Application & Proceed to Payment</button>
+      <p class="footer-note">After submission, your reference number is generated and payment instructions sent to your phone.<br>1M Scholars Ltd · Kigali, Rwanda · info@1mscholars.rw · +250 781 841 929</p>
+    </div>
+  </div>
+  </div>
+
+  <!-- SUCCESS -->
+  <div class="success-wrap" id="successWrap">
+    <div class="success-icon"><i class="ti ti-check"></i></div>
+    <h3>Application Submitted Successfully</h3>
+    <p>Your application has been saved securely. Your reference number:</p>
+    <div class="ref-box" id="refDisplay">1MS-2025-XXXXX</div>
+    <p>Please save this number. Payment instructions will be sent to your phone within 15 minutes. Once payment is confirmed, your consultant will begin guiding you through the UR application process.</p>
+    <p style="margin-top:1rem;font-size:11.5px;color:var(--muted)">Questions? WhatsApp: <strong>+250 781 841 929</strong> · info@1mscholars.rw</p>
+    <button class="btn-sm primary" onclick="resetForm()" style="margin-top:1.4rem"><i class="ti ti-plus"></i> Submit Another Application</button>
+  </div>
+
+</div>
+</div>
+</div>
+
+<!-- ADMIN PAGE -->
+<div class="page" id="adminPage">
+
+  <!-- LOGIN -->
+  <div id="adminLogin" class="admin-login">
+    <div class="login-card">
+      <div style="text-align:center;margin-bottom:1.2rem"><div style="width:52px;height:52px;border-radius:50%;background:#0a2240;display:inline-flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;color:#fff;font-size:18px;font-weight:600">1M</div></div>
+      <h2>Admin Portal</h2>
+      <p>1M Scholars Ltd · Authorized Access Only</p>
+      <div class="login-err" id="loginErr">Incorrect username or password.</div>
+      <div class="field" style="margin-bottom:12px"><label>Username</label><input id="adminUser" type="text" placeholder="Enter username" /></div>
+      <div class="field" style="margin-bottom:10px"><label>Password</label><input id="adminPass" type="password" placeholder="Enter password" onkeydown="if(event.key==='Enter')doLogin()" /></div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;font-size:12px;color:#6b7a8d">
+        <input type="checkbox" id="showAdminPass" onchange="togglePasswordVisibility()" />
+        <label for="showAdminPass" style="margin:0;cursor:pointer;">Show password while typing</label>
+      </div>
+      <button class="submit-btn" onclick="doLogin()"><i class="ti ti-login"></i> Login to Admin Portal</button>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="adminDash" style="display:none">
+    <div class="admin-wrap">
+
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.2rem;flex-wrap:wrap;gap:8px">
+        <div>
+          <h2 style="font-family:'Playfair Display',serif;font-size:20px">Applications Dashboard</h2>
+          <p style="font-size:12px;color:var(--muted);margin-top:3px">1M Scholars Ltd · Academic Year 2025–2026</p>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn-sm" onclick="exportCSV()"><i class="ti ti-download"></i> Export CSV</button>
+          <button class="btn-sm primary" onclick="loadApplications()"><i class="ti ti-refresh"></i> Refresh</button>
+        </div>
+      </div>
+
+      <div class="admin-stats" id="statsRow">
+        <div class="stat-card"><div class="stat-icon"><i class="ti ti-users"></i></div><div class="stat-num" id="statTotal">0</div><div class="stat-label">Total Applications</div></div>
+        <div class="stat-card"><div class="stat-icon"><i class="ti ti-clock"></i></div><div class="stat-num" id="statPending">0</div><div class="stat-label">Pending Payment</div></div>
+        <div class="stat-card"><div class="stat-icon"><i class="ti ti-circle-check"></i></div><div class="stat-num" id="statPaid">0</div><div class="stat-label">Payment Confirmed</div></div>
+        <div class="stat-card"><div class="stat-icon"><i class="ti ti-coin"></i></div><div class="stat-num" id="statRevenue">0</div><div class="stat-label">Est. Revenue (RWF)</div></div>
+      </div>
+
+      <div class="admin-card">
+        <div class="admin-card-head">
+          <h3><i class="ti ti-table"></i> Application Records</h3>
+          <span id="tableCount" style="font-size:12px;color:var(--muted)">Loading...</span>
+        </div>
+        <div class="search-bar">
+          <input id="searchInput" type="text" placeholder="Search by name, ID, email, ref..." oninput="filterTable()" />
+          <select id="filterStatus" onchange="filterTable()">
+            <option value="">All Statuses</option>
+            <option value="new">New</option>
+            <option value="pending">Pending</option>
+            <option value="paid">Paid</option>
+            <option value="rejected">Rejected</option>
+          </select>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Ref #</th><th>Full Name</th><th>ID / Passport</th><th>Phone</th><th>Email</th><th>Category</th><th>1st Choice</th><th>Payment</th><th>Status</th><th>Date</th><th>Action</th></tr></thead>
+            <tbody id="appTableBody"><tr><td colspan="11" style="text-align:center;padding:2rem;color:var(--muted)">Loading applications...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- DETAIL MODAL -->
+<div class="modal-bg" id="detailModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="modalTitle">Application Detail</h3>
+      <button class="modal-close" onclick="closeModal()"><i class="ti ti-x"></i></button>
+    </div>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'scholars_applications_v2';
+const ADMIN_CREDS = {
+  '0781841929': 'Myriam',
+  '0782774986': 'Myliam'
+};
+
+let allApplications = [];
+let filteredApplications = [];
+let isLoggedIn = false;
+
+// ─── PERSISTENT STORAGE ──────────────────────────────────────
+async function saveToStorage(data) {
+  try {
+    await window.storage.set(STORAGE_KEY, JSON.stringify(data));
+    return true;
+  } catch(e) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    return false;
+  }
+}
+
+async function loadFromStorage() {
+  try {
+    const res = await window.storage.get(STORAGE_KEY);
+    if (res && res.value) return JSON.parse(res.value);
+  } catch(e) {}
+  try {
+    const local = localStorage.getItem(STORAGE_KEY);
+    if (local) return JSON.parse(local);
+  } catch(e) {}
+  return [];
+}
+
+function genRef() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let r = '';
+  for(let i=0;i<6;i++) r+=chars[Math.floor(Math.random()*chars.length)];
+  return '1MS-2025-'+r;
+}
+
+// ─── FORM ─────────────────────────────────────────────────────
+document.getElementById('sigDate').value = new Date().toISOString().split('T')[0];
+
+function validateField(id, fieldId) {
+  const el = document.getElementById(id);
+  const wrap = document.getElementById(fieldId || 'f-'+id);
+  if (!el || !el.value.trim()) {
+    if(wrap) wrap.classList.add('invalid');
+    return false;
+  }
+  if(wrap) wrap.classList.remove('invalid');
+  return true;
+}
+
+async function handleSubmit() {
+  const requiredFields = [
+    ['firstName','f-firstName'],['lastName','f-lastName'],['dob','f-dob'],
+    ['gender','f-gender'],['nationality','f-nationality'],['category','f-category'],
+    ['idNo','f-idNo'],['phone','f-phone'],['email','f-email'],['district','f-district'],
+    ['school','f-school'],['year','f-year'],['indexNo','f-indexNo'],['combo','f-combo'],
+    ['sigName','f-sigName'],['sigDate','f-sigDate']
+  ];
+
+  let valid = true;
+  let firstInvalid = null;
+  for(const [id, fid] of requiredFields) {
+    if(!validateField(id, fid)) { valid=false; if(!firstInvalid) firstInvalid=id; }
+  }
+
+  if(!document.getElementById('prog1').value.trim()) {
+    alert('Please enter your 1st program choice.'); return;
+  }
+
+  const agreements = ['agree1','agree2','agree3','agree4','agree5'];
+  for(const a of agreements) {
+    if(!document.getElementById(a).checked) {
+      alert('Please review and accept all declarations.'); return;
+    }
+  }
+
+  if(!valid) {
+    document.getElementById(firstInvalid)?.scrollIntoView({behavior:'smooth',block:'center'});
+    alert('Please fill in all required fields.');
+    return;
+  }
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  document.getElementById('loadingOverlay').classList.add('show');
+
+  const apps = await loadFromStorage();
+
+  const idVal = document.getElementById('idNo').value.trim().toUpperCase();
+  const emailVal = document.getElementById('email').value.trim().toLowerCase();
+
+  const dupId = apps.find(a => a.idNo.toUpperCase() === idVal);
+  const dupEmail = apps.find(a => a.email.toLowerCase() === emailVal);
+
+  if(dupId) {
+    document.getElementById('loadingOverlay').classList.remove('show');
+    btn.disabled = false;
+    document.getElementById('f-idNo').classList.add('invalid');
+    document.getElementById('idNo').scrollIntoView({behavior:'smooth',block:'center'});
+    alert('⚠️ An application with this ID/Passport number already exists in our system. Each applicant may only submit once. If you need help, contact 1M Scholars Ltd.');
+    return;
+  }
+  if(dupEmail) {
+    document.getElementById('loadingOverlay').classList.remove('show');
+    btn.disabled = false;
+    document.getElementById('f-email').classList.add('invalid');
+    document.getElementById('email').scrollIntoView({behavior:'smooth',block:'center'});
+    alert('⚠️ An application with this email address already exists. Each applicant may only register once per email. Contact us if this is an error.');
+    return;
+  }
+
+  const ref = genRef();
+  const record = {
+    ref,
+    firstName: document.getElementById('firstName').value.trim(),
+    lastName: document.getElementById('lastName').value.trim(),
+    dob: document.getElementById('dob').value,
+    gender: document.getElementById('gender').value,
+    nationality: document.getElementById('nationality').value,
+    category: document.getElementById('category').value,
+    idNo: idVal,
+    phone: document.getElementById('phone').value.trim(),
+    email: emailVal,
+    whatsapp: document.getElementById('whatsapp').value.trim(),
+    district: document.getElementById('district').value,
+    school: document.getElementById('school').value.trim(),
+    year: document.getElementById('year').value,
+    indexNo: document.getElementById('indexNo').value.trim(),
+    combo: document.getElementById('combo').value,
+    equivNo: document.getElementById('equivNo').value.trim(),
+    equivDate: document.getElementById('equivDate').value,
+    prog1: document.getElementById('prog1').value.trim(),
+    col1: document.getElementById('col1').value,
+    prog2: document.getElementById('prog2').value.trim(),
+    col2: document.getElementById('col2').value,
+    prog3: document.getElementById('prog3').value.trim(),
+    col3: document.getElementById('col3').value,
+    payMethod: document.getElementById('payMethod').value,
+    referral: document.getElementById('referral').value,
+    notes: document.getElementById('notes').value.trim(),
+    doc1: document.getElementById('doc1').checked,
+    doc2: document.getElementById('doc2').checked,
+    doc3: document.getElementById('doc3').checked,
+    doc4: document.getElementById('doc4').checked,
+    doc5: document.getElementById('doc5').checked,
+    doc6: document.getElementById('doc6').checked,
+    agree1: document.getElementById('agree1').checked,
+    agree2: document.getElementById('agree2').checked,
+    agree3: document.getElementById('agree3').checked,
+    agree4: document.getElementById('agree4').checked,
+    agree5: document.getElementById('agree5').checked
+  };
+
+  apps.push(record);
+  await saveToStorage(apps);
+
+  document.getElementById('loadingOverlay').classList.remove('show');
+  document.getElementById('formContent').style.display = 'none';
+  document.getElementById('successWrap').classList.add('show');
+  document.getElementById('refDisplay').textContent = ref;
+  document.getElementById('successWrap').scrollIntoView({behavior:'smooth'});
+}
+
+// ─── NAV ─────────────────────────────────────────────────────
+function showPage(pageId, btn) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(pageId).classList.add('active');
+  if(btn) btn.classList.add('active');
+  if(pageId === 'adminPage' && isLoggedIn) loadApplications();
+}
+
+// ─── ADMIN AUTH ───────────────────────────────────────────────
+function togglePasswordVisibility() {
+  const passField = document.getElementById('adminPass');
+  if (!passField) return;
+  passField.type = document.getElementById('showAdminPass').checked ? 'text' : 'password';
+}
+
+function doLogin() {
+  const u = document.getElementById('adminUser').value.trim();
+  const p = document.getElementById('adminPass').value;
+  if (ADMIN_CREDS[u] && ADMIN_CREDS[u] === p) {
+    isLoggedIn = true;
+    document.getElementById('adminLogin').style.display = 'none';
+    document.getElementById('adminDash').style.display = 'block';
+    document.getElementById('logoutBtn').style.display = 'flex';
+    document.getElementById('loginErr').classList.remove('show');
+    loadApplications();
+  } else {
+    document.getElementById('loginErr').classList.add('show');
+    document.getElementById('adminPass').value = '';
+  }
+}
+
+function logout() {
+  isLoggedIn = false;
+  document.getElementById('adminLogin').style.display = 'block';
+  document.getElementById('adminDash').style.display = 'none';
+  document.getElementById('logoutBtn').style.display = 'none';
+  document.getElementById('adminUser').value = '';
+  document.getElementById('adminPass').value = '';
+  showPage('formPage', document.querySelector('.nav-tab'));
+}
+
+// ─── ADMIN DATA ───────────────────────────────────────────────
+async function loadApplications() {
+  const apps = await loadFromStorage();
+  allApplications = apps;
+  filteredApplications = [...apps];
+  updateStats(apps);
+  renderTable(filteredApplications);
+  document.getElementById('tableCount').textContent = apps.length + ' total record(s)';
+}
+
+function updateStats(apps) {
+  document.getElementById('statTotal').textContent = apps.length;
+  document.getElementById('statPending').textContent = apps.filter(a=>a.status==='new'||a.status==='pending').length;
+  document.getElementById('statPaid').textContent = apps.filter(a=>a.status==='paid').length;
+  document.getElementById('statRevenue').textContent = (apps.filter(a=>a.status==='paid').length * 15000).toLocaleString();
+}
+
+function filterTable() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  const st = document.getElementById('filterStatus').value;
+  filteredApplications = allApplications.filter(a => {
+    const name = (a.firstName+' '+a.lastName).toLowerCase();
+    const match = name.includes(q) || a.idNo.toLowerCase().includes(q) ||
+      a.email.includes(q) || a.ref.toLowerCase().includes(q) || a.phone.includes(q) ||
+      (a.school||'').toLowerCase().includes(q) || (a.indexNo||'').toLowerCase().includes(q) ||
+      (a.prog1||'').toLowerCase().includes(q) || (a.prog2||'').toLowerCase().includes(q) ||
+      (a.prog3||'').toLowerCase().includes(q) || (a.referral||'').toLowerCase().includes(q) ||
+      (a.payMethod||'').toLowerCase().includes(q);
+    const statMatch = !st || a.status === st;
+    return match && statMatch;
+  });
+  renderTable(filteredApplications);
+  document.getElementById('tableCount').textContent = filteredApplications.length + ' of ' + allApplications.length + ' record(s)';
+}
+
+function renderTable(apps) {
+  const tbody = document.getElementById('appTableBody');
+  if(!apps.length) {
+    tbody.innerHTML = '<tr><td colspan="11" style="text-align:center;padding:2rem;color:var(--muted)">No applications found.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = apps.slice().reverse().map((a,i) => {
+    const badgeClass = {new:'new',pending:'pending',paid:'paid',rejected:'rejected'}[a.status]||'new';
+    const badgeLabel = {new:'New',pending:'Pending',paid:'Paid ✓',rejected:'Rejected'}[a.status]||'New';
+    const date = new Date(a.submittedAt).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'2-digit'});
+    return `<tr>
+      <td><code style="font-size:11px;color:var(--blue)">${a.ref}</code></td>
+      <td style="font-weight:500">${a.firstName} ${a.lastName}</td>
+      <td style="font-family:monospace;font-size:11.5px">${a.idNo}</td>
+      <td>${a.phone}</td>
+      <td style="font-size:11.5px">${a.email}</td>
+      <td style="font-size:11px">${a.category||'-'}</td>
+      <td style="font-size:11.5px">${a.prog1||'-'}</td>
+      <td style="font-size:11px">${a.payMethod||'-'}</td>
+      <td><span class="badge ${badgeClass}">${badgeLabel}</span></td>
+      <td style="font-size:11px;color:var(--muted)">${date}</td>
+      <td><button class="btn-sm" onclick="openDetail('${a.ref}')" style="padding:4px 9px;font-size:11px"><i class="ti ti-eye" style="font-size:12px"></i> View</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function openDetail(ref) {
+  const a = allApplications.find(x=>x.ref===ref);
+  if(!a) return;
+  document.getElementById('modalTitle').textContent = `${a.firstName} ${a.lastName} — ${a.ref}`;
+  const date = new Date(a.submittedAt).toLocaleString('en-GB');
+  document.getElementById('modalBody').innerHTML = `
+    <div class="detail-grid">
+      <div class="detail-item"><div class="d-label">Reference</div><div class="d-val"><code>${a.ref}</code></div></div>
+      <div class="detail-item"><div class="d-label">Status</div><div class="d-val"><span class="badge ${a.status||'new'}">${({new:'New',pending:'Pending',paid:'Paid ✓',rejected:'Rejected'}[a.status]||'New')}</span></div></div>
+      <div class="detail-item"><div class="d-label">First Name</div><div class="d-val">${a.firstName}</div></div>
+      <div class="detail-item"><div class="d-label">Last Name</div><div class="d-val">${a.lastName}</div></div>
+      <div class="detail-item"><div class="d-label">Date of Birth</div><div class="d-val">${a.dob}</div></div>
+      <div class="detail-item"><div class="d-label">Gender</div><div class="d-val">${a.gender}</div></div>
+      <div class="detail-item"><div class="d-label">Nationality</div><div class="d-val">${a.nationality}</div></div>
+      <div class="detail-item"><div class="d-label">Category</div><div class="d-val">${a.category}</div></div>
+      <div class="detail-item"><div class="d-label">ID / Passport</div><div class="d-val"><code>${a.idNo}</code></div></div>
+      <div class="detail-item"><div class="d-label">Phone</div><div class="d-val">${a.phone}</div></div>
+      <div class="detail-item"><div class="d-label">Email</div><div class="d-val">${a.email}</div></div>
+      <div class="detail-item"><div class="d-label">WhatsApp</div><div class="d-val">${a.whatsapp||'-'}</div></div>
+      <div class="detail-item"><div class="d-label">District</div><div class="d-val">${a.district}</div></div>
+      <div class="detail-item"><div class="d-label">School</div><div class="d-val">${a.school}</div></div>
+      <div class="detail-item"><div class="d-label">S6 Year</div><div class="d-val">${a.year}</div></div>
+      <div class="detail-item"><div class="d-label">NESA Index</div><div class="d-val"><code>${a.indexNo}</code></div></div>
+      <div class="detail-item"><div class="d-label">A-Level Combo</div><div class="d-val">${a.combo}</div></div>
+      <div class="detail-item"><div class="d-label">Equiv. Cert No.</div><div class="d-val">${a.equivNo||'-'}</div></div>
+      <div class="detail-item"><div class="d-label">Equiv. Date</div><div class="d-val">${a.equivDate||'-'}</div></div>
+      <div class="detail-item full"><div class="d-label">1st Choice</div><div class="d-val">${a.prog1} — ${a.col1||'N/A'}</div></div>
+      <div class="detail-item full"><div class="d-label">2nd Choice</div><div class="d-val">${a.prog2||'-'} ${a.col2?'— '+a.col2:''}</div></div>
+      <div class="detail-item full"><div class="d-label">3rd Choice</div><div class="d-val">${a.prog3||'-'} ${a.col3?'— '+a.col3:''}</div></div>
+      <div class="detail-item"><div class="d-label">Payment Method</div><div class="d-val">${a.payMethod||'-'}</div></div>
+      <div class="detail-item"><div class="d-label">Referral</div><div class="d-val">${a.referral||'-'}</div></div>
+      <div class="detail-item full"><div class="d-label">Document Checklist</div><div class="d-val">${[
+        a.doc1 ? 'National ID / Passport ready' : null,
+        a.doc2 ? 'Certified S6 Certificate copy ready' : null,
+        a.doc3 ? 'NESA Equivalence Certificate copy ready' : null,
+        a.doc4 ? 'NESA Index Number confirmed' : null,
+        a.doc5 ? 'UR Reference Number ready' : null,
+        a.doc6 ? 'Proof of UR application fee payment ready' : null
+      ].filter(Boolean).join('<br>') || 'None selected'}</div></div>
+      <div class="detail-item full"><div class="d-label">Declarations Accepted</div><div class="d-val">${[
+        a.agree1 ? 'Eligibility criteria confirmed' : null,
+        a.agree2 ? 'Consultative agency terms accepted' : null,
+        a.agree3 ? 'Information accuracy confirmed' : null,
+        a.agree4 ? 'Non-refundable terms accepted' : null,
+        a.agree5 ? 'Contact consent granted' : null
+      ].filter(Boolean).join('<br>') || 'Not all declarations accepted'}</div></div>
+      <div class="detail-item"><div class="d-label">Submitted</div><div class="d-val">${date}</div></div>
+      ${a.notes?`<div class="detail-item full"><div class="d-label">Notes</div><div class="d-val">${a.notes}</div></div>`:''}
+    </div>
+    <div class="status-btns">
+      <strong style="font-size:12px;color:var(--muted);margin-right:4px">Update Status:</strong>
+      <button class="btn-sm" onclick="updateStatus('${a.ref}','new')"><i class="ti ti-refresh"></i> New</button>
+      <button class="btn-sm" onclick="updateStatus('${a.ref}','pending')"><i class="ti ti-clock"></i> Pending</button>
+      <button class="btn-sm primary" onclick="updateStatus('${a.ref}','paid')"><i class="ti ti-circle-check"></i> Mark Paid</button>
+      <button class="btn-sm danger" onclick="updateStatus('${a.ref}','rejected')"><i class="ti ti-x"></i> Reject</button>
+      <button class="btn-sm danger" onclick="deleteApp('${a.ref}')" style="margin-left:auto"><i class="ti ti-trash"></i> Delete</button>
+    </div>
+  `;
+  document.getElementById('detailModal').classList.add('open');
+}
+
+async function updateStatus(ref, status) {
+  const apps = await loadFromStorage();
+  const idx = apps.findIndex(a=>a.ref===ref);
+  if(idx>-1) { apps[idx].status = status; await saveToStorage(apps); }
+  allApplications = apps;
+  filterTable();
+  updateStats(apps);
+  closeModal();
+}
+
+async function deleteApp(ref) {
+  if(!confirm('Are you sure you want to permanently delete this application record? This cannot be undone.')) return;
+  const apps = await loadFromStorage();
+  const filtered = apps.filter(a=>a.ref!==ref);
+  await saveToStorage(filtered);
+  allApplications = filtered;
+  filteredApplications = filteredApplications.filter(a=>a.ref!==ref);
+  renderTable(filteredApplications);
+  updateStats(filtered);
+  document.getElementById('tableCount').textContent = filteredApplications.length + ' of ' + filtered.length + ' record(s)';
+  closeModal();
+}
+
+function closeModal() {
+  document.getElementById('detailModal').classList.remove('open');
+}
+
+function exportCSV() {
+  if(!allApplications.length){ alert('No data to export.'); return; }
+  const headers = ['Ref','First Name','Last Name','DOB','Gender','Nationality','Category','ID/Passport','Phone','Email','WhatsApp','District','School','Year','NESA Index','Combo','Equiv No','Equiv Date','1st Choice','College 1','2nd Choice','College 2','3rd Choice','College 3','Pay Method','Referral','Doc 1','Doc 2','Doc 3','Doc 4','Doc 5','Doc 6','Agree 1','Agree 2','Agree 3','Agree 4','Agree 5','Status','Submitted','Notes'];
+  const rows = allApplications.map(a=>[a.ref,a.firstName,a.lastName,a.dob,a.gender,a.nationality,a.category,a.idNo,a.phone,a.email,a.whatsapp,a.district,a.school,a.year,a.indexNo,a.combo,a.equivNo,a.equivDate,a.prog1,a.col1,a.prog2,a.col2,a.prog3,a.col3,a.payMethod,a.referral,a.doc1 ? 'Yes' : 'No',a.doc2 ? 'Yes' : 'No',a.doc3 ? 'Yes' : 'No',a.doc4 ? 'Yes' : 'No',a.doc5 ? 'Yes' : 'No',a.doc6 ? 'Yes' : 'No',a.agree1 ? 'Yes' : 'No',a.agree2 ? 'Yes' : 'No',a.agree3 ? 'Yes' : 'No',a.agree4 ? 'Yes' : 'No',a.agree5 ? 'Yes' : 'No',a.status,a.submittedAt,a.notes].map(v=>`"${(v||'').toString().replace(/"/g,'""')}"`).join(','));
+  const csv = [headers.join(','), ...rows].join('\n');
+  const blob = new Blob([csv], {type:'text/csv'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href=url; a.download='1MScholars_Applications_2025.csv'; a.click();
+  URL.revokeObjectURL(url);
+}
+
+document.getElementById('detailModal').addEventListener('click', function(e){ if(e.target===this) closeModal(); });
+</script>
+</body>
+</html>
