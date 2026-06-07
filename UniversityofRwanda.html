@@ -520,44 +520,44 @@ tr:hover td{background:#fafcff}
 </div>
 
 <script>
-const STORAGE_KEY = 'scholars_applications_v2';
-const ADMIN_CREDS = {
-  '0781841929': 'Myriam',
-  '0782774986': 'Myliam'
-};
-
 let allApplications = [];
 let filteredApplications = [];
 let isLoggedIn = false;
+let adminToken = sessionStorage.getItem('adminToken') || '';
 
-// ─── PERSISTENT STORAGE ──────────────────────────────────────
-async function saveToStorage(data) {
-  try {
-    await window.storage.set(STORAGE_KEY, JSON.stringify(data));
-    return true;
-  } catch(e) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    return false;
-  }
+// ─── API HELPERS ──────────────────────────────────────────────
+async function apiPost(url, body) {
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+  return { ok: res.ok, status: res.status, data: await res.json().catch(() => ({})) };
 }
 
-async function loadFromStorage() {
-  try {
-    const res = await window.storage.get(STORAGE_KEY);
-    if (res && res.value) return JSON.parse(res.value);
-  } catch(e) {}
-  try {
-    const local = localStorage.getItem(STORAGE_KEY);
-    if (local) return JSON.parse(local);
-  } catch(e) {}
-  return [];
+async function apiGet(url) {
+  const res = await fetch(url, {
+    headers: { 'Authorization': 'Bearer ' + adminToken }
+  });
+  if (!res.ok) return null;
+  return res.json();
 }
 
-function genRef() {
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  let r = '';
-  for(let i=0;i<6;i++) r+=chars[Math.floor(Math.random()*chars.length)];
-  return '1MS-2025-'+r;
+async function apiPatch(url, body) {
+  const res = await fetch(url, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + adminToken },
+    body: JSON.stringify(body)
+  });
+  return res.ok;
+}
+
+async function apiDelete(url) {
+  const res = await fetch(url, {
+    method: 'DELETE',
+    headers: { 'Authorization': 'Bearer ' + adminToken }
+  });
+  return res.ok;
 }
 
 // ─── FORM ─────────────────────────────────────────────────────
@@ -610,43 +610,16 @@ async function handleSubmit() {
   btn.disabled = true;
   document.getElementById('loadingOverlay').classList.add('show');
 
-  const apps = await loadFromStorage();
-
-  const idVal = document.getElementById('idNo').value.trim().toUpperCase();
-  const emailVal = document.getElementById('email').value.trim().toLowerCase();
-
-  const dupId = apps.find(a => a.idNo.toUpperCase() === idVal);
-  const dupEmail = apps.find(a => a.email.toLowerCase() === emailVal);
-
-  if(dupId) {
-    document.getElementById('loadingOverlay').classList.remove('show');
-    btn.disabled = false;
-    document.getElementById('f-idNo').classList.add('invalid');
-    document.getElementById('idNo').scrollIntoView({behavior:'smooth',block:'center'});
-    alert('⚠️ An application with this ID/Passport number already exists in our system. Each applicant may only submit once. If you need help, contact 1M Scholars Ltd.');
-    return;
-  }
-  if(dupEmail) {
-    document.getElementById('loadingOverlay').classList.remove('show');
-    btn.disabled = false;
-    document.getElementById('f-email').classList.add('invalid');
-    document.getElementById('email').scrollIntoView({behavior:'smooth',block:'center'});
-    alert('⚠️ An application with this email address already exists. Each applicant may only register once per email. Contact us if this is an error.');
-    return;
-  }
-
-  const ref = genRef();
-  const record = {
-    ref,
+  const payload = {
     firstName: document.getElementById('firstName').value.trim(),
     lastName: document.getElementById('lastName').value.trim(),
     dob: document.getElementById('dob').value,
     gender: document.getElementById('gender').value,
     nationality: document.getElementById('nationality').value,
     category: document.getElementById('category').value,
-    idNo: idVal,
+    idNo: document.getElementById('idNo').value.trim(),
     phone: document.getElementById('phone').value.trim(),
-    email: emailVal,
+    email: document.getElementById('email').value.trim(),
     whatsapp: document.getElementById('whatsapp').value.trim(),
     district: document.getElementById('district').value,
     school: document.getElementById('school').value.trim(),
@@ -677,14 +650,43 @@ async function handleSubmit() {
     agree5: document.getElementById('agree5').checked
   };
 
-  apps.push(record);
-  await saveToStorage(apps);
+  const result = await apiPost('/api/applications', payload);
 
   document.getElementById('loadingOverlay').classList.remove('show');
+  btn.disabled = false;
+
+  if (!result.ok) {
+    if (result.data.error === 'duplicate_id') {
+      document.getElementById('f-idNo').classList.add('invalid');
+      document.getElementById('idNo').scrollIntoView({behavior:'smooth',block:'center'});
+      alert('⚠️ An application with this ID/Passport number already exists in our system. Each applicant may only submit once. If you need help, contact 1M Scholars Ltd.');
+    } else if (result.data.error === 'duplicate_email') {
+      document.getElementById('f-email').classList.add('invalid');
+      document.getElementById('email').scrollIntoView({behavior:'smooth',block:'center'});
+      alert('⚠️ An application with this email address already exists. Each applicant may only register once per email. Contact us if this is an error.');
+    } else {
+      alert('Submission failed. Please try again or contact support.');
+    }
+    return;
+  }
+
+  const record = result.data;
   document.getElementById('formContent').style.display = 'none';
   document.getElementById('successWrap').classList.add('show');
-  document.getElementById('refDisplay').textContent = ref;
+  document.getElementById('refDisplay').textContent = record.ref;
   document.getElementById('successWrap').scrollIntoView({behavior:'smooth'});
+}
+
+function resetForm() {
+  document.getElementById('formContent').style.display = '';
+  document.getElementById('successWrap').classList.remove('show');
+  document.querySelectorAll('#formContent input:not([type=checkbox])').forEach(el => el.value = '');
+  document.querySelectorAll('#formContent select').forEach(el => el.selectedIndex = 0);
+  document.querySelectorAll('#formContent textarea').forEach(el => el.value = '');
+  document.querySelectorAll('#formContent input[type=checkbox]').forEach(el => el.checked = false);
+  document.getElementById('sigDate').value = new Date().toISOString().split('T')[0];
+  document.querySelectorAll('.field.invalid').forEach(el => el.classList.remove('invalid'));
+  window.scrollTo({top: 0, behavior: 'smooth'});
 }
 
 // ─── NAV ─────────────────────────────────────────────────────
@@ -703,10 +705,13 @@ function togglePasswordVisibility() {
   passField.type = document.getElementById('showAdminPass').checked ? 'text' : 'password';
 }
 
-function doLogin() {
+async function doLogin() {
   const u = document.getElementById('adminUser').value.trim();
   const p = document.getElementById('adminPass').value;
-  if (ADMIN_CREDS[u] && ADMIN_CREDS[u] === p) {
+  const result = await apiPost('/api/auth', { username: u, password: p });
+  if (result.ok && result.data.token) {
+    adminToken = result.data.token;
+    sessionStorage.setItem('adminToken', adminToken);
     isLoggedIn = true;
     document.getElementById('adminLogin').style.display = 'none';
     document.getElementById('adminDash').style.display = 'block';
@@ -721,6 +726,8 @@ function doLogin() {
 
 function logout() {
   isLoggedIn = false;
+  adminToken = '';
+  sessionStorage.removeItem('adminToken');
   document.getElementById('adminLogin').style.display = 'block';
   document.getElementById('adminDash').style.display = 'none';
   document.getElementById('logoutBtn').style.display = 'none';
@@ -731,7 +738,13 @@ function logout() {
 
 // ─── ADMIN DATA ───────────────────────────────────────────────
 async function loadApplications() {
-  const apps = await loadFromStorage();
+  document.getElementById('tableCount').textContent = 'Loading...';
+  document.getElementById('appTableBody').innerHTML = '<tr><td colspan="11" style="text-align:center;padding:2rem;color:var(--muted)">Loading applications...</td></tr>';
+  const apps = await apiGet('/api/applications');
+  if (!apps) {
+    document.getElementById('appTableBody').innerHTML = '<tr><td colspan="11" style="text-align:center;padding:2rem;color:var(--muted)">Failed to load. Please refresh.</td></tr>';
+    return;
+  }
   allApplications = apps;
   filteredApplications = [...apps];
   updateStats(apps);
@@ -751,8 +764,8 @@ function filterTable() {
   const st = document.getElementById('filterStatus').value;
   filteredApplications = allApplications.filter(a => {
     const name = (a.firstName+' '+a.lastName).toLowerCase();
-    const match = name.includes(q) || a.idNo.toLowerCase().includes(q) ||
-      a.email.includes(q) || a.ref.toLowerCase().includes(q) || a.phone.includes(q) ||
+    const match = name.includes(q) || (a.idNo||'').toLowerCase().includes(q) ||
+      (a.email||'').includes(q) || (a.ref||'').toLowerCase().includes(q) || (a.phone||'').includes(q) ||
       (a.school||'').toLowerCase().includes(q) || (a.indexNo||'').toLowerCase().includes(q) ||
       (a.prog1||'').toLowerCase().includes(q) || (a.prog2||'').toLowerCase().includes(q) ||
       (a.prog3||'').toLowerCase().includes(q) || (a.referral||'').toLowerCase().includes(q) ||
@@ -770,10 +783,10 @@ function renderTable(apps) {
     tbody.innerHTML = '<tr><td colspan="11" style="text-align:center;padding:2rem;color:var(--muted)">No applications found.</td></tr>';
     return;
   }
-  tbody.innerHTML = apps.slice().reverse().map((a,i) => {
+  tbody.innerHTML = apps.slice().reverse().map((a) => {
     const badgeClass = {new:'new',pending:'pending',paid:'paid',rejected:'rejected'}[a.status]||'new';
     const badgeLabel = {new:'New',pending:'Pending',paid:'Paid ✓',rejected:'Rejected'}[a.status]||'New';
-    const date = new Date(a.submittedAt).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'2-digit'});
+    const date = a.submittedAt ? new Date(a.submittedAt).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'2-digit'}) : '—';
     return `<tr>
       <td><code style="font-size:11px;color:var(--blue)">${a.ref}</code></td>
       <td style="font-weight:500">${a.firstName} ${a.lastName}</td>
@@ -794,7 +807,7 @@ function openDetail(ref) {
   const a = allApplications.find(x=>x.ref===ref);
   if(!a) return;
   document.getElementById('modalTitle').textContent = `${a.firstName} ${a.lastName} — ${a.ref}`;
-  const date = new Date(a.submittedAt).toLocaleString('en-GB');
+  const date = a.submittedAt ? new Date(a.submittedAt).toLocaleString('en-GB') : '—';
   document.getElementById('modalBody').innerHTML = `
     <div class="detail-grid">
       <div class="detail-item"><div class="d-label">Reference</div><div class="d-val"><code>${a.ref}</code></div></div>
@@ -816,7 +829,7 @@ function openDetail(ref) {
       <div class="detail-item"><div class="d-label">A-Level Combo</div><div class="d-val">${a.combo}</div></div>
       <div class="detail-item"><div class="d-label">Equiv. Cert No.</div><div class="d-val">${a.equivNo||'-'}</div></div>
       <div class="detail-item"><div class="d-label">Equiv. Date</div><div class="d-val">${a.equivDate||'-'}</div></div>
-      <div class="detail-item full"><div class="d-label">1st Choice</div><div class="d-val">${a.prog1} — ${a.col1||'N/A'}</div></div>
+      <div class="detail-item full"><div class="d-label">1st Choice</div><div class="d-val">${a.prog1||'-'} — ${a.col1||'N/A'}</div></div>
       <div class="detail-item full"><div class="d-label">2nd Choice</div><div class="d-val">${a.prog2||'-'} ${a.col2?'— '+a.col2:''}</div></div>
       <div class="detail-item full"><div class="d-label">3rd Choice</div><div class="d-val">${a.prog3||'-'} ${a.col3?'— '+a.col3:''}</div></div>
       <div class="detail-item"><div class="d-label">Payment Method</div><div class="d-val">${a.payMethod||'-'}</div></div>
@@ -852,25 +865,24 @@ function openDetail(ref) {
 }
 
 async function updateStatus(ref, status) {
-  const apps = await loadFromStorage();
-  const idx = apps.findIndex(a=>a.ref===ref);
-  if(idx>-1) { apps[idx].status = status; await saveToStorage(apps); }
-  allApplications = apps;
+  const ok = await apiPatch('/api/applications/' + ref, { status });
+  if (!ok) { alert('Failed to update status.'); return; }
+  const idx = allApplications.findIndex(a=>a.ref===ref);
+  if (idx > -1) allApplications[idx].status = status;
   filterTable();
-  updateStats(apps);
+  updateStats(allApplications);
   closeModal();
 }
 
 async function deleteApp(ref) {
   if(!confirm('Are you sure you want to permanently delete this application record? This cannot be undone.')) return;
-  const apps = await loadFromStorage();
-  const filtered = apps.filter(a=>a.ref!==ref);
-  await saveToStorage(filtered);
-  allApplications = filtered;
+  const ok = await apiDelete('/api/applications/' + ref);
+  if (!ok) { alert('Failed to delete application.'); return; }
+  allApplications = allApplications.filter(a=>a.ref!==ref);
   filteredApplications = filteredApplications.filter(a=>a.ref!==ref);
   renderTable(filteredApplications);
-  updateStats(filtered);
-  document.getElementById('tableCount').textContent = filteredApplications.length + ' of ' + filtered.length + ' record(s)';
+  updateStats(allApplications);
+  document.getElementById('tableCount').textContent = filteredApplications.length + ' of ' + allApplications.length + ' record(s)';
   closeModal();
 }
 
@@ -881,7 +893,7 @@ function closeModal() {
 function exportCSV() {
   if(!allApplications.length){ alert('No data to export.'); return; }
   const headers = ['Ref','First Name','Last Name','DOB','Gender','Nationality','Category','ID/Passport','Phone','Email','WhatsApp','District','School','Year','NESA Index','Combo','Equiv No','Equiv Date','1st Choice','College 1','2nd Choice','College 2','3rd Choice','College 3','Pay Method','Referral','Doc 1','Doc 2','Doc 3','Doc 4','Doc 5','Doc 6','Agree 1','Agree 2','Agree 3','Agree 4','Agree 5','Status','Submitted','Notes'];
-  const rows = allApplications.map(a=>[a.ref,a.firstName,a.lastName,a.dob,a.gender,a.nationality,a.category,a.idNo,a.phone,a.email,a.whatsapp,a.district,a.school,a.year,a.indexNo,a.combo,a.equivNo,a.equivDate,a.prog1,a.col1,a.prog2,a.col2,a.prog3,a.col3,a.payMethod,a.referral,a.doc1 ? 'Yes' : 'No',a.doc2 ? 'Yes' : 'No',a.doc3 ? 'Yes' : 'No',a.doc4 ? 'Yes' : 'No',a.doc5 ? 'Yes' : 'No',a.doc6 ? 'Yes' : 'No',a.agree1 ? 'Yes' : 'No',a.agree2 ? 'Yes' : 'No',a.agree3 ? 'Yes' : 'No',a.agree4 ? 'Yes' : 'No',a.agree5 ? 'Yes' : 'No',a.status,a.submittedAt,a.notes].map(v=>`"${(v||'').toString().replace(/"/g,'""')}"`).join(','));
+  const rows = allApplications.map(a=>[a.ref,a.firstName,a.lastName,a.dob,a.gender,a.nationality,a.category,a.idNo,a.phone,a.email,a.whatsapp,a.district,a.school,a.year,a.indexNo,a.combo,a.equivNo,a.equivDate,a.prog1,a.col1,a.prog2,a.col2,a.prog3,a.col3,a.payMethod,a.referral,a.doc1?'Yes':'No',a.doc2?'Yes':'No',a.doc3?'Yes':'No',a.doc4?'Yes':'No',a.doc5?'Yes':'No',a.doc6?'Yes':'No',a.agree1?'Yes':'No',a.agree2?'Yes':'No',a.agree3?'Yes':'No',a.agree4?'Yes':'No',a.agree5?'Yes':'No',a.status,a.submittedAt,a.notes].map(v=>`"${(v||'').toString().replace(/"/g,'""')}"`).join(','));
   const csv = [headers.join(','), ...rows].join('\n');
   const blob = new Blob([csv], {type:'text/csv'});
   const url = URL.createObjectURL(blob);
